@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html color-mode="user">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href='https://fonts.googleapis.com/css?family=JetBrains Mono' rel='stylesheet'>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                line-height: 1.4;
+                padding: 1rem;
+                max-width: 800px;
+                background: black;
+                color: white;
+                margin: 0 auto;
+            }
+            h1, h2, h3, h4, h5, h6 {
+                font-family: "JetBrains Mono", monospace;
+            }
+            h1 {
+                text-shadow: 0.1rem 0.1rem 0 dimgray;
+                text-align: center;
+                margin-bottom: 0.25rem;
+            }
+            a {
+                color: skyblue;
+                font-weight: bold;
+            }
+            .mobile-gone { display: none; }
+            @media only screen and (min-width: 768px) {
+                .mobile-gone { display: unset; }
+                h1 { font-size: 3rem; }
+                .iframe-div { max-width: 600px; }
+            }
+            section { margin-bottom: 1.5rem; }
+            h2 { margin-bottom: 0.5rem; }
+            ul { margin-top: 0.25rem; }
+            .switcher { display:flex; justify-content:center; gap:1rem; flex-wrap:wrap; margin:0 0 1rem; }
+            .switcher a { text-transform: lowercase; }
+            .subtitle { text-align: center; margin: 0 0 1rem; }
+            footer { margin-top: 2rem; text-align: center; }
+            .footer-links { display:flex; justify-content:center; gap:1rem; flex-wrap:wrap; }
+        </style>
+    </head>
+    <body>
+        <nav class="switcher">
+            <a href="/">thesis</a>
+            <a href="/cv/">cv</a>
+        </nav>
+        <header>
+            <h1>Jonathan Salzer</h1>
+            <p class="subtitle">Systems Engineer, Operations @ Carbon Robotics</p>
+        </header>
+        <main>
+            <section>
+                <h2>Experience</h2>
+                <ul>
+                    <li><strong>Carbon Robotics</strong>
+                        <ul>
+                            <li>Systems Engineer, Operations (2026-present)</li>
+                            <li>Lead, Field Operations Austria Region (2025-2026)</li>
+                            <li>Field Robotics Engineer (2025)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Dotbite</strong>
+                        <ul>
+                            <li>Full-stack Developer (2020-2023)</li>
+                            <li>Sales Representative (2019-2020)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Juno Care OG</strong>
+                        <ul>
+                            <li>Co-Founder (2022-2024)</li>
+                        </ul>
+                    </li>
+                    <li><strong>TUW Racing</strong>
+                        <ul>
+                            <li>Head of Chassis (2018-2019)</li>
+                            <li>Member of Marketing (2017-2018)</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Education</h2>
+                <ul>
+                    <li><strong>Universiteit van Amsterdam</strong> — M.Sc. Software Engineering (2023-2024)</li>
+                    <li><strong>TU Wien</strong> — B.Sc. Business Informatics (2019-2022)</li>
+                    <li><strong>TU Wien</strong> — Mechanical Engineering - Management (2017-2019)</li>
+                    <li><strong>Akademisches Gymnasium Wien</strong> — Matura (2009-2017)</li>
+                </ul>
+            </section>
+        </main>
+        <footer>
+            <div class="footer-links">
+                <a href="mailto:jonathan@salzer.net">email</a>
+                <a href="https://www.linkedin.com/in/jonathan-salzer/">linkedin</a>
+                <a href="https://github.com/jonathansalzer">github</a>
+            </div>
+        </footer>
+    </body>
+</html>

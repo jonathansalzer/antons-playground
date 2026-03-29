@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html color-mode="user">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href='https://fonts.googleapis.com/css?family=JetBrains Mono' rel='stylesheet'>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                line-height: 1.4;
+                padding: 1rem;
+                max-width: 800px;
+                background: black;
+                color: white;
+                margin: 0 auto;
+            }
+            h1, h2, h3, h4, h5, h6 {
+                font-family: "JetBrains Mono", monospace;
+            }
+            h1 {
+                text-shadow: 0.1rem 0.1rem 0 dimgray;
+                text-align: center;
+            }
+            a {
+                color: skyblue;
+                font-weight: bold;
+            }
+            .mobile-gone { display: none; }
+            @media only screen and (min-width: 768px) {
+                .mobile-gone { display: unset; }
+                h1 { font-size: 3rem; }
+                .iframe-div { max-width: 600px; }
+            }
+            section { margin-bottom: 1.5rem; }
+            h2 { margin-bottom: 0.5rem; }
+            ul { margin-top: 0.25rem; }
+            .switcher { display:flex; justify-content:center; gap:1rem; flex-wrap:wrap; margin:0 0 1rem; }
+            .switcher a { text-transform: lowercase; }
+            footer { margin-top: 2rem; text-align: center; }
+            .footer-links { display:flex; justify-content:center; gap:1rem; flex-wrap:wrap; }
+        </style>
+    </head>
+    <body>
+        <nav class="switcher">
+            <a href="/">thesis</a>
+            <a href="/cv/">cv</a>
+        </nav>
+        <header>
+            <h1>Bringing the RT-1-X Foundation Model <br class="mobile-gone">to a SCARA Robot</h1>
+        </header>
+        <main>
+            <p>
+                Hi, nice that you found the way to this page! Below, you will find all relevant links related to my Master's Thesis. 
+                If this caught your interest, don't hesitate to contact me via <a href="mailto:jonathan@salzer.net">Email</a> or <a href="https://www.linkedin.com/in/jonathan-salzer/">LinkedIn</a>, let's chat!
+            </p>
+            <ul>
+                <li><a href="https://arxiv.org/abs/2409.03299">Paper for BNAIC/BeNeLearn 2024</a></li>
+                <li><a href="https://bnaic2024.sites.uu.nl/wp-content/uploads/sites/986/2024/11/Bringing-the-RT-1-X-Foundation-Model-to-a-SCARA-robot.pdf">Extended Abstract</a></li>
+                <li><a href="https://staff.fnwi.uva.nl/a.visser/education/masterProjects/SE_master_thesis_Jonathan_Salzer.pdf">Full Master's Thesis</a></li>
+                <li><a href="https://www.intelligentroboticslab.nl/">Intelligent Robotics Lab @ University of Amsterdam</a></li>
+                <li><a href="https://staff.fnwi.uva.nl/a.visser/">Arnoud Visser (Supervisor & Paper Co-Author)</a></li>
+            </ul>
+
+            <div style="width: 100%; margin: auto;" class="iframe-div">
+                <div style="position: relative; width: 100%; overflow: hidden; padding-top: 56.25%;">
+                <p>
+                    <iframe style="position: absolute; top: 0; left: 0; right: 0; width: 100%; height: 100%; border: none;" width="420" height="236"
+                        src="https://www.youtube.com/embed/tgbNymZ7vqY?playlist=SKCprj6-DDQ&start=9&loop=1&autoplay=1&mute=1&controls=0">
+                    </iframe>
+                </p>
+                </div>
+            </div>
+        </main>
+        <footer>
+            <div class="footer-links">
+                <a href="mailto:jonathan@salzer.net">email</a>
+                <a href="https://www.linkedin.com/in/jonathan-salzer/">linkedin</a>
+                <a href="https://github.com/jonathansalzer">github</a>
+            </div>
+        </footer>
+    </body>
+</html>
