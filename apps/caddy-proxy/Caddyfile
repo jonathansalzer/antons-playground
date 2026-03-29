@@ -1,0 +1,9 @@
+:8080 {
+  handle_path /hello-world/* {
+    reverse_proxy 127.0.0.1:3001
+  }
+
+  handle_path /other-app/* {
+    reverse_proxy 127.0.0.1:3002
+  }
+}
