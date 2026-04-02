@@ -12,12 +12,13 @@ Each app:
 - is private by default
 - may optionally be made public
 
-## Recommended Stack
+## Current Stack
 
-- Reverse proxy: Caddy
-- Runtime: Docker Compose
+- Private ingress: Tailscale Serve -> local Caddy router on `127.0.0.1:18080`
+- App runtime: Docker Compose
 - Shared network: `carbon_apps`
 - Per-app metadata file: `carbon.yml`
+- Public ingress: Caddy scaffold exists, not yet the live path
 
 ## Directory Model
 
@@ -51,27 +52,17 @@ Each app:
 
 ## Routing Model
 
-### Public apps
-- DNS wildcard `*.carbon.jonathansalzer.com` points to the VPS.
-- Caddy terminates TLS and routes by hostname.
-- Public apps are reachable at:
-  - `https://<app>.carbon.jonathansalzer.com`
+### Private apps — live now
+- Tailscale Serve owns `https://anton.tail73de9.ts.net`
+- it forwards to `http://127.0.0.1:18080`
+- the local private router uses `handle_path` to map `/<app>` to the app container
 
-Examples:
-- `https://habit.carbon.jonathansalzer.com`
-- `https://timer.carbon.jonathansalzer.com`
+Example:
+- `https://anton.tail73de9.ts.net/starter-web-app`
 
-### Private apps
-- Private apps are not given public-facing subdomains.
-- They are routed by path on the VPS Tailscale hostname.
-- Private apps are reachable at:
-  - `https://<vps-name>.ts.net/<app>`
-
-Examples:
-- `https://anton-vps.tail1234.ts.net/habit`
-- `https://anton-vps.tail1234.ts.net/timer`
-
-Generated private Caddy routes use `handle_path` so the app prefix is stripped before proxying to the container.
+### Public apps — next layer
+- intended public URL: `https://<app>.carbon.jonathansalzer.com`
+- public Caddy routing remains scaffolded in-repo, but is not the current live ingress
 
 ## App Metadata
 
@@ -119,26 +110,25 @@ Intended behavior:
 - app is reachable from the public internet
 - reverse proxy exposes it normally with TLS at `<app>.carbon.jonathansalzer.com`
 
-## Current Scaffold Status
+## Current live status
 
-- public apps render into `platform/caddy/sites/public/*.caddy`
-- private apps render into `platform/caddy/sites/private/*.caddy`
-- `render-route.sh` generates host-based routes for public apps and path-based Tailscale routes for private apps
-- `smoke-test.sh` resolves the correct target URL based on visibility
+- live private router config: `platform/private-router/Caddyfile`
+- live private ingress host: `anton.tail73de9.ts.net`
+- starter proof app: `apps/starter-web-app`
+- public route generation under `platform/caddy/` remains scaffold-only for now
 - starter template defaults to `visibility: private`
 
 ## Deployment Flow
 
-For each generated app:
-1. Create app folder
-2. Scaffold app
-3. Add Dockerfile / compose config
-4. Add `carbon.yml`
-5. Join shared docker network
-6. Register reverse proxy route
-7. Deploy container
-8. Run smoke tests
-9. Report URL and visibility
+For each new private app:
+1. Create `apps/<app-name>/`
+2. Add `Dockerfile`, `compose.yml`, and `carbon.yml`
+3. Join shared Docker network `carbon_apps`
+4. Add `handle_path /<app>* { reverse_proxy <service>:<port> }` to `platform/private-router/Caddyfile`
+5. Run `docker compose up -d --build` in the app folder
+6. Run `docker compose up -d` in `platform/private-router`
+7. Verify `https://anton.tail73de9.ts.net/<app>`
+8. Report URL, stack, and visibility
 
 ## Operational Defaults
 

@@ -24,4 +24,5 @@ fi
 docker compose -f "$COMPOSE_FILE" up -d --build
 
 echo "deployed $APP_DIR"
-echo "next: reload or redeploy the shared Caddy container if needed"
+echo "note: private apps currently require a matching route in platform/private-router/Caddyfile"
+echo "next: run docker compose up -d in platform/private-router if its config changed"

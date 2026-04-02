@@ -27,4 +27,5 @@ else
   fi
 fi
 
-echo "next: reload the shared Caddy service so the new route is picked up"
+echo "note: public/private route rendering under platform/caddy/ is scaffold-only right now"
+echo "for live private deploys, add the route to platform/private-router/Caddyfile and restart that compose stack"

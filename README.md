@@ -26,38 +26,37 @@ antons-playground/
   prototype-builder/
 ```
 
-## Platform Scaffold
+## Platform
 
-The first-pass shared platform scaffold now lives under `platform/`.
+The shared platform lives under `platform/`.
 
 Key pieces:
-- `platform/contracts/carbon.example.yml` — example per-app metadata contract
-- `platform/contracts/carbon.schema.md` — documented schema and field semantics
-- `platform/caddy/Caddyfile` — shared Caddy entrypoint that imports generated route snippets
-- `platform/scripts/` — validation, route rendering, registration, deploy, and smoke-test stubs
-- `platform/templates/starter-web-app/` — a minimal static starter app template
+- `platform/contracts/` — per-app metadata contract (`carbon.yml`)
+- `platform/scripts/` — validation, route rendering, deploy, and smoke-test helpers
+- `platform/templates/starter-web-app/` — minimal app template
+- `platform/private-router/` — live private ingress for Tailscale path routing
+- `platform/caddy/` — public ingress scaffold for future public apps
 
-Typical workflow:
-1. copy `platform/templates/starter-web-app/` to `apps/<app-name>/`
-2. update `carbon.yml`, `compose.yml`, and app contents
-3. run `platform/scripts/deploy-app.sh apps/<app-name>`
-4. reload the shared Caddy service
+Current live model:
+1. app lives in `apps/<app-name>/`
+2. app joins Docker network `carbon_apps`
+3. private apps are routed by `platform/private-router/Caddyfile`
+4. Tailscale Serve points to `http://127.0.0.1:18080`
+5. the private router forwards `/<app>` to the app container
 
 ## Routing Model
 
-### Public apps
+### Private apps — live now
+- `https://anton.tail73de9.ts.net/<app>`
+- Tailscale Serve forwards to `http://127.0.0.1:18080`
+- `platform/private-router/Caddyfile` strips the prefix and proxies to the app container
+
+Example:
+- `https://anton.tail73de9.ts.net/starter-web-app`
+
+### Public apps — scaffolded, not yet live
 - `https://<app>.carbon.jonathansalzer.com`
-
-Example:
-- `https://timer.carbon.jonathansalzer.com`
-
-### Private apps
-- `https://<vps-name>.ts.net/<app>`
-
-Example:
-- `https://anton-vps.tail1234.ts.net/timer`
-
-Private apps are routed by path on the VPS Tailscale hostname. Generated Caddy config strips the prefix before proxying to the container.
+- intended to be handled by Caddy on the public side
 
 ## Prototype Builder System
 
@@ -82,12 +81,14 @@ The prototype-builder system is intended to turn rough app ideas into working MV
 - One shared deployment convention
 - One visibility setting per app: `private` or `public`
 
-### Recommended Stack
+### Current deployment contract
 
-- Reverse proxy: Caddy
-- Runtime: Docker Compose
-- Shared network: `carbon_apps`
-- Per-app metadata file: `carbon.yml`
+- private-first
+- app folder: `apps/<app-name>/`
+- shared Docker network: `carbon_apps`
+- app metadata: `carbon.yml`
+- private router target: service name on `carbon_apps`
+- private ingress host: `anton.tail73de9.ts.net`
 
 ### Documents
 

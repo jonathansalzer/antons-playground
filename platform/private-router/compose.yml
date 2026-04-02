@@ -1,0 +1,15 @@
+services:
+  carbon-private-router:
+    image: caddy:2
+    container_name: carbon-private-router
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:18080:8080"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+    networks:
+      - carbon_apps
+
+networks:
+  carbon_apps:
+    external: true

@@ -1,33 +1,23 @@
-# Platform Scaffold
+# Platform
 
-This directory holds the shared conventions for hosting many small prototype apps from the same VPS.
+This directory holds the shared conventions for hosting small prototype apps on the same VPS.
 
-## Goals
+## Live deployment model
 
-- one folder per app under `apps/`
-- one metadata contract per app via `carbon.yml`
-- one shared Docker network: `carbon_apps`
-- one shared Caddy deployment with generated site snippets
-- private-by-default app exposure
+- apps live in `apps/`
+- all app containers join Docker network `carbon_apps`
+- private ingress is live today via Tailscale Serve -> `127.0.0.1:18080`
+- `platform/private-router/Caddyfile` routes `/<app>` to the correct container
+- public Caddy config exists as scaffold, but is not the live path yet
 
 ## Layout
 
 ```text
 platform/
-  caddy/
-    Caddyfile
-    sites/
-      public/
-      private/
-  contracts/
-    carbon.example.yml
-    carbon.schema.md
-  scripts/
-    deploy-app.sh
-    register-app.sh
-    render-route.sh
-    smoke-test.sh
-    validate-carbon.sh
+  caddy/                 # public ingress scaffold
+  contracts/             # carbon.yml contract
+  private-router/        # live private router config
+  scripts/               # helper scripts
   templates/
     starter-web-app/
 ```
@@ -41,31 +31,35 @@ Each app should include:
 - `Dockerfile` when building locally
 - `README.md`
 
-## Visibility Model
+## Visibility model
 
-- `public`: app is routed publicly at `https://<app>.carbon.jonathansalzer.com`
-- `private`: app is routed only over Tailscale at `https://<vps-name>.ts.net/<app>`
+- `private` — live now at `https://anton.tail73de9.ts.net/<app>`
+- `public` — planned at `https://<app>.carbon.jonathansalzer.com`
 
-Private apps are path-routed on the VPS Tailscale hostname instead of getting public-facing subdomains. This keeps the private model simple:
-- public apps use normal DNS + TLS via Caddy
-- private apps stay on the tailnet and are reachable from Jonathan's phone/computers while connected to Tailscale
+Private apps are path-routed on the Tailscale hostname and should work when the prefix is stripped before proxying.
 
-The Caddy scaffold expects a `PRIVATE_TAILNET_HOST` value such as `anton-vps.tail1234.ts.net` when rendering private routes.
+## How to deploy a new private app
 
-## Typical Flow
+1. Copy `platform/templates/starter-web-app/` to `apps/<app-name>/`
+2. Set in `carbon.yml`:
+   - `slug`
+   - `runtime.service`
+   - `runtime.internalPort`
+   - `domain.privateTailnetHost: anton.tail73de9.ts.net`
+   - `routing.privatePathPrefix: /<app-name>`
+3. Ensure the app container joins `carbon_apps`
+4. Add a route to `platform/private-router/Caddyfile`:
+   - `handle_path /<app-name>* { reverse_proxy <service>:<port> }`
+5. Start or rebuild the app with `docker compose up -d --build`
+6. Restart the private router with `docker compose up -d` in `platform/private-router`
+7. Verify `https://anton.tail73de9.ts.net/<app-name>`
 
-1. Copy `platform/templates/starter-web-app/` into `apps/<app-name>/`
-2. Edit app code and `carbon.yml`
-3. Run `platform/scripts/deploy-app.sh apps/<app-name>`
-4. Review the generated route snippet in `platform/caddy/sites/`
-5. Reload or redeploy the shared Caddy service
+## Live example
 
-## URL Model
+- app: `apps/starter-web-app`
+- URL: `https://anton.tail73de9.ts.net/starter-web-app`
 
-### Public app example
-- `https://timer.carbon.jonathansalzer.com`
+## Notes
 
-### Private app example
-- `https://anton-vps.tail1234.ts.net/timer`
-
-Private apps should be built to work behind a path prefix. The generated Caddy routes strip the prefix before proxying to the container.
+- root `/` on the Tailscale host currently belongs to the private router, not OpenClaw
+- public Caddy config should be treated as scaffold until public ingress is wired for real
