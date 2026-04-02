@@ -8,7 +8,7 @@ Each app:
 - lives in `~/antons-playground/apps/<app-name>`
 - runs in its own container or compose project
 - is routed through a shared reverse proxy
-- is reachable at `<app-name>.carbon.jonathansalzer.com`
+- is reachable either publicly or privately depending on visibility
 - is private by default
 - may optionally be made public
 
@@ -33,34 +33,73 @@ Each app:
   platform/
     caddy/
       Caddyfile
+      sites/
+        public/
+        private/
+    contracts/
+      carbon.example.yml
+      carbon.schema.md
     scripts/
+      validate-carbon.sh
+      render-route.sh
       register-app.sh
       deploy-app.sh
       smoke-test.sh
     templates/
-      web-app/
+      starter-web-app/
 ```
 
 ## Routing Model
 
+### Public apps
 - DNS wildcard `*.carbon.jonathansalzer.com` points to the VPS.
 - Caddy terminates TLS and routes by hostname.
-- Each app is reachable internally by service name and port on a shared docker network.
-- Example:
-  - `habit.carbon.jonathansalzer.com` -> `habit:3000`
-  - `timer.carbon.jonathansalzer.com` -> `timer:8080`
+- Public apps are reachable at:
+  - `https://<app>.carbon.jonathansalzer.com`
+
+Examples:
+- `https://habit.carbon.jonathansalzer.com`
+- `https://timer.carbon.jonathansalzer.com`
+
+### Private apps
+- Private apps are not given public-facing subdomains.
+- They are routed by path on the VPS Tailscale hostname.
+- Private apps are reachable at:
+  - `https://<vps-name>.ts.net/<app>`
+
+Examples:
+- `https://anton-vps.tail1234.ts.net/habit`
+- `https://anton-vps.tail1234.ts.net/timer`
+
+Generated private Caddy routes use `handle_path` so the app prefix is stripped before proxying to the container.
 
 ## App Metadata
 
-Each app should include a `carbon.yml` file similar to:
+Each app should include a `carbon.yml` file with fields like:
 
 ```yaml
+version: 1
 name: myapp
-domain: myapp.carbon.jonathansalzer.com
-visibility: private
-port: 3000
-healthcheck: /
+slug: myapp
 stack: vite-react
+visibility: private
+
+domain:
+  publicHost: myapp.carbon.jonathansalzer.com
+  privateTailnetHost: anton-vps.tail1234.ts.net
+
+runtime:
+  service: myapp
+  internalPort: 3000
+  healthcheckPath: /
+  docker:
+    composeFile: compose.yml
+    dockerfile: Dockerfile
+    network: carbon_apps
+
+routing:
+  privatePathPrefix: /myapp
+  stripPrefix: true
 ```
 
 ## Visibility Modes
@@ -70,7 +109,7 @@ Default mode.
 
 Intended behavior:
 - app is for Jonathan's use over Tailscale
-- app should not be openly reachable from the public internet by default
+- app is reached via the VPS MagicDNS host and a path prefix
 - deployment flow should assume private unless the request explicitly says public
 
 ### Public
@@ -78,19 +117,15 @@ Explicit opt-in.
 
 Intended behavior:
 - app is reachable from the public internet
-- reverse proxy exposes it normally with TLS
+- reverse proxy exposes it normally with TLS at `<app>.carbon.jonathansalzer.com`
 
-## Important Design Constraint
+## Current Scaffold Status
 
-Using a public DNS name alone does not make an app truly private. Private-mode apps therefore need a deliberate protection layer.
-
-Recommended implementation approaches to evaluate during build:
-
-1. Proxy-level access control for private apps
-2. Only publishing public routes in the main proxy
-3. Separate private and public entrypoints
-
-The final implementation should prioritize safety over convenience and avoid accidental public exposure.
+- public apps render into `platform/caddy/sites/public/*.caddy`
+- private apps render into `platform/caddy/sites/private/*.caddy`
+- `render-route.sh` generates host-based routes for public apps and path-based Tailscale routes for private apps
+- `smoke-test.sh` resolves the correct target URL based on visibility
+- starter template defaults to `visibility: private`
 
 ## Deployment Flow
 
@@ -113,3 +148,4 @@ For each generated app:
 - mobile-friendly UI by default
 - health endpoint when useful
 - explicit visibility field per app
+- private-first routing model

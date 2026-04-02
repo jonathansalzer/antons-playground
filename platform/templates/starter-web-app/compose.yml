@@ -1,0 +1,13 @@
+services:
+  starter-web-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    expose:
+      - "8080"
+    networks:
+      - carbon_apps
+
+networks:
+  carbon_apps:
+    external: true

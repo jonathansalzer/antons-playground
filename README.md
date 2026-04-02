@@ -19,8 +19,45 @@ Rules of the road:
 antons-playground/
   apps/
   platform/
+    caddy/
+    contracts/
+    scripts/
+    templates/
   prototype-builder/
 ```
+
+## Platform Scaffold
+
+The first-pass shared platform scaffold now lives under `platform/`.
+
+Key pieces:
+- `platform/contracts/carbon.example.yml` — example per-app metadata contract
+- `platform/contracts/carbon.schema.md` — documented schema and field semantics
+- `platform/caddy/Caddyfile` — shared Caddy entrypoint that imports generated route snippets
+- `platform/scripts/` — validation, route rendering, registration, deploy, and smoke-test stubs
+- `platform/templates/starter-web-app/` — a minimal static starter app template
+
+Typical workflow:
+1. copy `platform/templates/starter-web-app/` to `apps/<app-name>/`
+2. update `carbon.yml`, `compose.yml`, and app contents
+3. run `platform/scripts/deploy-app.sh apps/<app-name>`
+4. reload the shared Caddy service
+
+## Routing Model
+
+### Public apps
+- `https://<app>.carbon.jonathansalzer.com`
+
+Example:
+- `https://timer.carbon.jonathansalzer.com`
+
+### Private apps
+- `https://<vps-name>.ts.net/<app>`
+
+Example:
+- `https://anton-vps.tail1234.ts.net/timer`
+
+Private apps are routed by path on the VPS Tailscale hostname. Generated Caddy config strips the prefix before proxying to the container.
 
 ## Prototype Builder System
 
@@ -32,7 +69,8 @@ The prototype-builder system is intended to turn rough app ideas into working MV
 - Agent asks at most 1-2 short clarification rounds if needed
 - Agent then builds the app without requiring more hand-holding
 - Apps live in `~/antons-playground/apps/<app-name>`
-- Each app gets `<app-name>.carbon.jonathansalzer.com`
+- Public apps get `https://<app>.carbon.jonathansalzer.com`
+- Private apps get `https://<vps-name>.ts.net/<app>`
 - Apps are private by default for Tailscale use
 - Selected apps can be made public on the internet
 

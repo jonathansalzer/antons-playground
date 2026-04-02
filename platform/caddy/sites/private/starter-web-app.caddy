@@ -1,0 +1,10 @@
+starter-web-app.carbon.jonathansalzer.com {
+  encode gzip
+
+  # Private-by-default stub. Replace with your preferred auth layer.
+  basic_auth {
+    carbon JDJhJDE0JFlvdXJQbGFjZWhvbGRlckhhc2hSZXBsYWNlTWU
+  }
+
+  reverse_proxy starter-web-app:8080
+}

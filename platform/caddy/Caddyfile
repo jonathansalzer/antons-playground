@@ -1,0 +1,18 @@
+{
+  auto_https on
+}
+
+# Shared Caddy entrypoint for the prototype-builder platform.
+#
+# Public apps are routed by hostname on the public internet:
+#   https://<app>.carbon.jonathansalzer.com
+#
+# Private apps are routed by path on the VPS Tailscale hostname:
+#   https://<vps-name>.ts.net/<app>
+#
+# Set PRIVATE_TAILNET_HOST to the VPS MagicDNS hostname before deploying,
+# for example:
+#   export PRIVATE_TAILNET_HOST="anton-vps.tail1234.ts.net"
+
+import sites/public/*.caddy
+import sites/private/*.caddy

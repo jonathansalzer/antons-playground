@@ -1,0 +1,41 @@
+# Example per-app metadata contract for the prototype-builder platform.
+version: 1
+name: starter-web-app
+slug: starter-web-app
+owner: anton
+stack: static-html
+visibility: private
+
+domain:
+  publicHost: starter-web-app.carbon.jonathansalzer.com
+  publicBaseDomain: carbon.jonathansalzer.com
+  privateTailnetHost: anton-vps.tail1234.ts.net
+
+runtime:
+  service: starter-web-app
+  internalPort: 8080
+  healthcheckPath: /
+  docker:
+    composeFile: compose.yml
+    dockerfile: Dockerfile
+    network: carbon_apps
+
+routing:
+  privatePathPrefix: /starter-web-app
+  stripPrefix: true
+  tls: true
+
+privacy:
+  mode: tailscale-only
+  note: Private apps are served only on the VPS Tailscale hostname using a path prefix.
+
+build:
+  install: ""
+  build: ""
+  run: "docker compose up -d --build"
+
+metadata:
+  description: Minimal starter app for the prototype-builder platform.
+  tags:
+    - prototype
+    - internal-tool
