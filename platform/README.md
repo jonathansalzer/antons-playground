@@ -51,8 +51,9 @@ Private apps are path-routed on the Tailscale hostname and should work when the 
 4. Add a route to `platform/private-router/Caddyfile`:
    - `handle_path /<app-name>* { reverse_proxy <service>:<port> }`
 5. Start or rebuild the app with `docker compose up -d --build`
-6. Restart the private router with `docker compose up -d` in `platform/private-router`
-7. Verify `https://anton.tail73de9.ts.net/<app-name>`
+6. Regenerate the root landing page with `platform/private-router/render-index.sh`
+7. Restart the private router with `docker compose up -d` in `platform/private-router`
+8. Verify `https://anton.tail73de9.ts.net/` and `https://anton.tail73de9.ts.net/<app-name>`
 
 ## Live example
 

@@ -1,11 +1,13 @@
 :8080 {
   encode gzip
-
-  handle / {
-    respond "Anton private app router is up.\n" 200
-  }
+  root * /srv
 
   handle_path /starter-web-app* {
     reverse_proxy starter-web-app:8080
+  }
+
+  handle / {
+    rewrite * /index.html
+    file_server
   }
 }

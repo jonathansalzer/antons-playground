@@ -7,6 +7,7 @@ services:
       - "127.0.0.1:18080:8080"
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./index.html:/srv/index.html:ro
     networks:
       - carbon_apps
 

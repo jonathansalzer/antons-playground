@@ -126,9 +126,10 @@ For each new private app:
 3. Join shared Docker network `carbon_apps`
 4. Add `handle_path /<app>* { reverse_proxy <service>:<port> }` to `platform/private-router/Caddyfile`
 5. Run `docker compose up -d --build` in the app folder
-6. Run `docker compose up -d` in `platform/private-router`
-7. Verify `https://anton.tail73de9.ts.net/<app>`
-8. Report URL, stack, and visibility
+6. Run `platform/private-router/render-index.sh`
+7. Run `docker compose up -d` in `platform/private-router`
+8. Verify `https://anton.tail73de9.ts.net/` and `https://anton.tail73de9.ts.net/<app>`
+9. Report URL, stack, and visibility
 
 ## Operational Defaults
 

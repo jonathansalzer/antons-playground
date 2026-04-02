@@ -6,6 +6,7 @@ APP_DIR="${1:-}"
 [ -d "$APP_DIR" ] || { echo "missing app directory: $APP_DIR" >&2; exit 1; }
 
 SCRIPT_DIR=$(CDPATH= cd -- "$(dirname "$0")" && pwd)
+ROOT_DIR=$(CDPATH= cd -- "$SCRIPT_DIR/../.." && pwd)
 CARBON_FILE="$APP_DIR/carbon.yml"
 COMPOSE_FILE="$APP_DIR/compose.yml"
 
@@ -22,6 +23,10 @@ if [ -n "$network" ]; then
 fi
 
 docker compose -f "$COMPOSE_FILE" up -d --build
+
+if [ -x "$ROOT_DIR/platform/private-router/render-index.sh" ]; then
+  "$ROOT_DIR/platform/private-router/render-index.sh" >/dev/null || true
+fi
 
 echo "deployed $APP_DIR"
 echo "note: private apps currently require a matching route in platform/private-router/Caddyfile"
